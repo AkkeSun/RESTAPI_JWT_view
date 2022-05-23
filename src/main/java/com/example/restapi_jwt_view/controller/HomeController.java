@@ -47,9 +47,11 @@ public class HomeController {
 
             if(data.get("errCode") != null)
                 return errCode.get(data.get("errCode"));
-
-            restService.saveSession(data);
-            return "redirect:/";
+            else
+            {
+                restService.saveSession(data);
+                return "redirect:/";
+            }
         }
 
         Map<String, Object> responseMap = (Map<String, Object>) response.getBody();
@@ -69,14 +71,18 @@ public class HomeController {
         return "register";
     }
 
-    @GetMapping("/user")
-    public String userPage(){
-        return "user";
+    @GetMapping("/admin")
+    public String adminPage(HttpSession session){
+
+        if(session.getAttribute("ACCESS-TOKEN") == null)
+            return "redirect:login";
+        return "admin";
+
     }
 
-    @GetMapping("/admin")
-    public String adminPage(){
-        return "admin";
+    @GetMapping("/denied")
+    public String deniedPage(){
+        return "denied";
     }
 
 
@@ -84,7 +90,7 @@ public class HomeController {
     @PostMapping("/saveSession")
     public void saveSessionForAjax(@RequestBody TokenDto token, HttpSession session){
         session.setAttribute("ACCESS-TOKEN", token.getAccessToken());
-        session.setAttribute("REFRESH-TOKEN", token.getAccessToken());
+        session.setAttribute("REFRESH-TOKEN", token.getRefreshToken());
     }
 
 }

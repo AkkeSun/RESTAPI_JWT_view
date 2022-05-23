@@ -46,8 +46,8 @@
 
 
             ajax.done( res => {
-                sessionStorage.setItem("ACCESS-TOKEN", res.data.password);
-                sessionStorage.setItem("REFRESH-TOKEN", res.data.refreshToken);
+                localStorage.setItem("ACCESS-TOKEN", res.data.password);
+                localStorage.setItem("REFRESH-TOKEN", res.data.refreshToken);
                 let token = {accessToken  : res.data.password,
                              refreshToken : res.data.refreshToken}
                 saveServerSession(token).done( ()  => location.href="/") ;

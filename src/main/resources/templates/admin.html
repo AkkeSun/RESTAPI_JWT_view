@@ -7,10 +7,38 @@
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
 </head>
+
+<script>
+
+    let REST_API_URL = "http://localhost:8080";
+    getData();
+
+    function getData() {
+
+        let ajax = $.ajax({
+            url: REST_API_URL + "/admin",
+            type: "get",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("ACCESS-TOKEN", localStorage.getItem("ACCESS-TOKEN"));
+                xhr.setRequestHeader("REFRESH-TOKEN", localStorage.getItem("REFRESH-TOKEN"));
+            }
+        });
+
+        ajax.done( res => {
+            console.log(res);
+
+            if (res.data.errCode) {
+                location.href='/denied';
+            }
+        })
+    }
+
+</script>
+
 <body>
 <div class="container">
     <br><br>
-    <H1>INDEX PAGE ( <span th:utext="${data.val}"></span> )</H1>
+    <H1>ADMIN PAGE</H1>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Navbar</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
