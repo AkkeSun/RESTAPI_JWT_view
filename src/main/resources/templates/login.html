@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+    <script src="/js/common.js"></script>
 </head>
 <body>
 <div class="container">
@@ -31,43 +32,23 @@
 <script>
     $(function (){
 
-        let REST_API_URL = "http://localhost:8080"
-
         $("#login").click(function (){
 
             let data = {email:$("#email").val(), password:$("#password").val()}
-
-            let ajax = $.ajax({
-                url: REST_API_URL + "/sign/login",
-                type: "post",
-                contentType : 'application/json',
-                data: JSON.stringify(data)
-            });
-
+            let ajax = restAjaxComm("/sign/login", "post", 'application/json', JSON.stringify(data));
 
             ajax.done( res => {
-                localStorage.setItem("ACCESS-TOKEN", res.data.password);
-                localStorage.setItem("REFRESH-TOKEN", res.data.refreshToken);
-                let token = {accessToken  : res.data.password,
-                             refreshToken : res.data.refreshToken}
-                saveServerSession(token).done( ()  => location.href="/") ;
+                tokenSave(res.data).done(() => location.href="/");
             })
-
 
             ajax.fail( ()  => {
                 alert('아이디 혹은 비밀번호가 올바르지 않습니다');
             })
         })
 
-
-        // home server 에 토큰값을 저장
-        function saveServerSession(data) {
-             return $.ajax({
-                    url: "/saveSession",
-                    type: "post",
-                    contentType : 'application/json',
-                    data: JSON.stringify(data)
-                });
+        function tokenSave(token) {
+            let data = {'accessToken':token.password, 'refreshToken':token.refreshToken}
+            return homeAjaxComm("/token", "post", "application/json", JSON.stringify(data))
         }
 
     })
